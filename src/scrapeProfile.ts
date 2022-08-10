@@ -12,9 +12,12 @@ export async function scrapeProfile(
     handleError(e);
   });
   const profileUrl = page.url();
-  const profileName =
-    (await page.$eval("h1", (el) => el.textContent?.trim())) || "";
-  console.log(`scraping ${profileName}'s profile `);
+  const profileName = await page
+    .$eval("h1", (el) => el.textContent?.trim() || "")
+    .catch((e) => {
+      handleError(e);
+      return "";
+    });
   let cases = 1;
   try {
     // case where items are more in job history
@@ -25,16 +28,25 @@ export async function scrapeProfile(
     await page.click(
       "section #experience + div + div .pvs-list__footer-wrapper a"
     );
-    await page.waitForSelector(
-      "section .pvs-list__container .artdeco-list__item",
-      { timeout: 2000 }
-    );
+    await page
+      .waitForSelector("section .pvs-list__container .artdeco-list__item", {
+        timeout: 2000,
+      })
+      .catch((e) => {
+        handleError(e, "on experience page couldn't find element");
+      });
     cases = 2;
   } catch {
     cases = 1;
   }
   if (cases === 1) {
     const selector = "section #experience + div + div .artdeco-list__item";
+    try {
+      await page.waitForSelector(selector, { timeout: 2000 });
+    } catch (err) {
+      handleError(err, "in case-1 couldn't find selectors");
+      return [];
+    }
     result = await getData(page, selector, cases, query);
   } else if (cases === 2) {
     const selector = "section .pvs-list__container .artdeco-list__item";
@@ -80,21 +92,32 @@ async function getData(
           }
         }
         if (items.length > 1) {
-          console.log(items);
-          console.log("in if block");
           // case 1
           const filteredItems = items.filter((job) =>
             job.textContent?.trim().toLowerCase().includes(query.toLowerCase())
           );
-          jobTitle =
-            filteredItems[filteredItems.length - 1]
-              .querySelector(".mr1 span")
-              ?.textContent?.trim() || "";
-          companyName =
-            item.querySelector(".mr1 span")?.textContent?.trim() || "";
+          // adding logic for exceptional case.
+          const filteredItem = filteredItems[filteredItems.length - 1];
+          if (filteredItem.querySelector(":scope > span")) {
+            // selectect element that have jobTitle contains span child.
+            jobTitle =
+              filteredItem.querySelector(".mr1 span")?.textContent?.trim() ||
+              "";
+            companyName =
+              item.querySelector(".mr1 span")?.textContent?.trim() || "";
+          } else {
+            // handling the case found in this url https://www.linkedin.com/in/ACwAAAKAu3EBynCDNtwKmuwr6l6QXtDYgQW87dA
+            // where selected element don't have job title and company name.
+            // this type of element don't have span in direct child.
+            jobTitle = item.querySelector(".mr1 span")?.textContent || "";
+            companyName =
+              item
+                .querySelector(".t-14 span")
+                ?.textContent?.split("·")[0]
+                .trim() || "";
+          }
         } else {
           // case 2
-          console.log("in else block");
           jobTitle = item.querySelector(".mr1 span")?.textContent || "";
           companyName =
             item

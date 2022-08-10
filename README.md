@@ -20,7 +20,7 @@ run scraper with this command.
 
 ```bash
 
-node dist/index.js node dist/index.js --session_id=<session-id of sales navigator account> --sesssion_id_profiles=<session-id of likedin account use to scrape profiles> --search_keyword=<keyword to search for in profiles> --saved_search=<url of saved search of sales navigator account> --output=<name of output csv file>
+save file and execute following command to see the result.
 
 ```
 
@@ -28,17 +28,20 @@ node dist/index.js node dist/index.js --session_id=<session-id of sales navigato
 
 Required arguments:
 
-```
- --session_id  	            value of li_at cookie.
-                            steps required to get value
-                            1. Login to LinkedIn using an account of your choice.
-                            2. Open Chrome developer tools
-                            3. Go to tab Application, then from left panel select Storage -> Cookies -> https://www.linkedin.com. In the main view locate row with name li_at and copy content from the column Value.
- --search_keyword           keyword you want to search for in profiles. i.e testrail
+````
 
- --sesssion_id_profiles     session id of linkedin account (most probably fake. it may get banned. )
+## output
 
-```
+currently output will be saved in two formats json and csv. name of output files will be
+profile-2.
+### changing output file name.
+go to dist/index.js on line 76 and 77. you can change output file name here.
+
+after that save file and execute following command to see results.
+
+```javascript
+node dist/index.js
+````
 
 #### Note : you must provide either input or saved_search argument.
 
