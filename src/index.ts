@@ -51,7 +51,7 @@ async function main() {
     await browser.close();
     return;
   }
-  console.log("scraping data from sales navigator");
+  console.log("scraping links from sales navigator");
   const profilesData = await scrapeFromSalesNavigator(
     browser,
     searchUrl,
@@ -93,6 +93,7 @@ async function scrapeFromSalesNavigator(
   let continueScraping = true;
   let counter = 1;
   let profilesData: Output[] = [];
+  let profilesCounter = 1;
   while (continueScraping) {
     const resourceUrl = `${searchUrl}&page=${counter}`;
     const page = await browser.newPage();
@@ -126,9 +127,21 @@ async function scrapeFromSalesNavigator(
     console.log(
       `${profileLinks.length} profile links found on page ${counter}`
     );
-    const data = await scrapeProfiles(page, profileLinks, keyword);
-    profilesData.push(...data);
-    const csv = new ObjectsToCsv(data);
+    const result: Output[] = [];
+    for (let i = 0; i < profileLinks.length; i++) {
+      console.log(`processing ${profilesCounter}: ${profileLinks[i]}`);
+      const data = await scrapeProfile(page, keyword, profileLinks[i]);
+      if (!data.length)
+        console.log(`Skipping: Not Found ${keyword} in job history\n`);
+      else
+        console.log(
+          `Success: Found ${keyword} ${data.length} times in job history\n`
+        );
+      result.push(...data);
+      profilesCounter++;
+    }
+    profilesData.push(...result);
+    const csv = new ObjectsToCsv(profilesData);
     await csv.toDisk(outputPath);
     counter++;
     await page.close();
