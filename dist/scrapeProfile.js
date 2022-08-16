@@ -7,6 +7,9 @@ async function scrapeProfile(page, query, url) {
     await page.goto(url, { timeout: 0 }).catch((e) => {
         (0, errorHandling_1.handleError)(e);
     });
+    await new Promise(function (resolve) {
+        setTimeout(resolve, 30000);
+    });
     const profileUrl = page.url();
     const profileName = await page
         .$eval("h1", (el) => el.textContent?.trim() || "")
@@ -19,6 +22,7 @@ async function scrapeProfile(page, query, url) {
         // case where items are more in job history
         await page.waitForSelector("section #experience + div + div .pvs-list__footer-wrapper", { timeout: 2000 });
         await page.click("section #experience + div + div .pvs-list__footer-wrapper a");
+        await page.waitForTimeout(2000);
         await page
             .waitForSelector("section .pvs-list__container .artdeco-list__item", {
             timeout: 2000,
@@ -37,7 +41,7 @@ async function scrapeProfile(page, query, url) {
             await page.waitForSelector(selector, { timeout: 2000 });
         }
         catch (err) {
-            (0, errorHandling_1.handleError)(err, "in case-1 couldn't find selectors");
+            (0, errorHandling_1.handleError)(err, "in case-1 couldn't find selector");
             return [];
         }
         result = await getData(page, selector, cases, query);
@@ -82,9 +86,23 @@ async function getData(page, selector, cases, query) {
                 // case 1
                 const filteredItems = items.filter((job) => job.textContent?.trim().toLowerCase().includes(query.toLowerCase()));
                 // adding logic for exceptional case.
+                if (!filteredItems.length) {
+                    // it means the keywork is in title.
+                    jobTitle = item.querySelector(".mr1 span")?.textContent || "";
+                    companyName =
+                        item
+                            .querySelector(".t-14 span")
+                            ?.textContent?.split("·")[0]
+                            .trim() || "";
+                    return {
+                        jobTitle,
+                        companyName,
+                        companyLink,
+                    };
+                }
                 const filteredItem = filteredItems[filteredItems.length - 1];
                 if (filteredItem.querySelector(":scope > span")) {
-                    // selectect element that have jobTitle contains span child.
+                    // select element that have jobTitle contains span child.
                     jobTitle =
                         filteredItem.querySelector(".mr1 span")?.textContent?.trim() ||
                             "";

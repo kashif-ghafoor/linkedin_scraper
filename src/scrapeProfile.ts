@@ -1,6 +1,6 @@
-import puppeteer from "puppeteer";
 import { handleError } from "./errorHandling";
 import { Output } from "./types";
+import puppeteer from "puppeteer";
 
 export async function scrapeProfile(
   page: puppeteer.Page,
@@ -10,6 +10,9 @@ export async function scrapeProfile(
   let result: Output[];
   await page.goto(url, { timeout: 0 }).catch((e) => {
     handleError(e);
+  });
+  await new Promise(function (resolve) {
+    setTimeout(resolve, 30000);
   });
   const profileUrl = page.url();
   const profileName = await page
@@ -28,6 +31,7 @@ export async function scrapeProfile(
     await page.click(
       "section #experience + div + div .pvs-list__footer-wrapper a"
     );
+    await page.waitForTimeout(2000);
     await page
       .waitForSelector("section .pvs-list__container .artdeco-list__item", {
         timeout: 2000,
@@ -44,7 +48,7 @@ export async function scrapeProfile(
     try {
       await page.waitForSelector(selector, { timeout: 2000 });
     } catch (err) {
-      handleError(err, "in case-1 couldn't find selectors");
+      handleError(err, "in case-1 couldn't find selector");
       return [];
     }
     result = await getData(page, selector, cases, query);
@@ -97,9 +101,23 @@ async function getData(
             job.textContent?.trim().toLowerCase().includes(query.toLowerCase())
           );
           // adding logic for exceptional case.
+          if (!filteredItems.length) {
+            // it means the keywork is in title.
+            jobTitle = item.querySelector(".mr1 span")?.textContent || "";
+            companyName =
+              item
+                .querySelector(".t-14 span")
+                ?.textContent?.split("·")[0]
+                .trim() || "";
+            return {
+              jobTitle,
+              companyName,
+              companyLink,
+            };
+          }
           const filteredItem = filteredItems[filteredItems.length - 1];
           if (filteredItem.querySelector(":scope > span")) {
-            // selectect element that have jobTitle contains span child.
+            // select element that have jobTitle contains span child.
             jobTitle =
               filteredItem.querySelector(".mr1 span")?.textContent?.trim() ||
               "";

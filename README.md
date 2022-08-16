@@ -20,7 +20,7 @@ run scraper with this command.
 
 ```bash
 
-save file and execute following command to see the result.
+node dist/index.js --session_id='AQEDATvP6GYDiBxwAAABgn8NMVoAAAGCoxm1Wk4Ad4YuaLhJ6QU0DKz27OxzEF3Dl-wGpTPE3rBs_w7o1TUxpKC1yg3fpuKcytu0tRaENQkMFg1nIuu9GUr04eLKlwRLfo2P8mZn8km98qLrtKckMbhX' --search_keyword='testrail' --saved_search='https://www.linkedin.com/sales/search/people\?savedSearchId\=50532930\&sessionId\=10uzk%2BqvQL%2BMm%2FZalBut2A%3D%3D' --output='output.csv'
 
 ```
 
@@ -28,20 +28,13 @@ save file and execute following command to see the result.
 
 Required arguments:
 
-````
-
-## output
-
-currently output will be saved in two formats json and csv. name of output files will be
-profile-2.
-### changing output file name.
-go to dist/index.js on line 76 and 77. you can change output file name here.
-
-after that save file and execute following command to see results.
-
-```javascript
-node dist/index.js
-````
+```
+ --session_id  	        value of li_at cookie.
+                        steps required to get value
+                        1. Login to LinkedIn using an account of your choice.
+                        2. Open Chrome developer tools
+                        3. Go to tab Application, then from left panel select Storage -> Cookies -> https://www.linkedin.com. In the main view locate row with name li_at and copy content from the column Value.
+ --search_keyword       keyword you want to search for in profiles. i.e testrail
 
 ```
 
@@ -66,4 +59,7 @@ multiple cases if it doesn't find one selector it will get another one.
 there may be cases that i didn't encouter yet. they will not throw an error. and the only indication that something wrong happen
 will be in your data either jobTitle will be empty string or jobTitle value will be replaced with companyName. I have scrape over 200 profiles didn't find any problem yet.
 if you find any issue please let me know.
+
+```
+
 ```

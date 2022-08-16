@@ -7,7 +7,8 @@ function parseString(str: string | undefined) {
 }
 
 export const args = parse<IArguments>({
-  session_id: { type: String },
+  session_id: String,
+  sesssion_id_profiles: String,
   search_keyword: String,
   input: { type: String, optional: true },
   output: { type: String, optional: true },

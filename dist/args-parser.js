@@ -7,7 +7,8 @@ function parseString(str) {
     return str?.replace(/\\/g, "");
 }
 exports.args = (0, ts_command_line_args_1.parse)({
-    session_id: { type: String },
+    session_id: String,
+    sesssion_id_profiles: String,
     search_keyword: String,
     input: { type: String, optional: true },
     output: { type: String, optional: true },

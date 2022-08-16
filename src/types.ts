@@ -7,6 +7,7 @@ export type Output = {
 };
 export interface IArguments {
   session_id: string;
+  sesssion_id_profiles: string;
   search_keyword: string;
   input?: string;
   output?: string;
