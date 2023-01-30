@@ -1,4 +1,4 @@
-# linkedin_scraper
+# linkedin_scraper_2
 
 ## prerequisites
 
@@ -20,7 +20,7 @@ run scraper with this command.
 
 ```bash
 
-node dist/index.js --session_id='AQEDATvP6GYDiBxwAAABgn8NMVoAAAGCoxm1Wk4Ad4YuaLhJ6QU0DKz27OxzEF3Dl-wGpTPE3rBs_w7o1TUxpKC1yg3fpuKcytu0tRaENQkMFg1nIuu9GUr04eLKlwRLfo2P8mZn8km98qLrtKckMbhX' --search_keyword='testrail' --saved_search='https://www.linkedin.com/sales/search/people\?savedSearchId\=50532930\&sessionId\=10uzk%2BqvQL%2BMm%2FZalBut2A%3D%3D' --output='output.csv'
+node dist/index.js node dist/index.js --session_id=<session-id of sales navigator account> --sesssion_id_profiles=<session-id of likedin account use to scrape profiles> --search_keyword=<keyword to search for in profiles> --saved_search=<url of saved search of sales navigator account> --output=<name of output csv file>
 
 ```
 
@@ -29,12 +29,14 @@ node dist/index.js --session_id='AQEDATvP6GYDiBxwAAABgn8NMVoAAAGCoxm1Wk4Ad4YuaLh
 Required arguments:
 
 ```
- --session_id  	        value of li_at cookie.
-                        steps required to get value
-                        1. Login to LinkedIn using an account of your choice.
-                        2. Open Chrome developer tools
-                        3. Go to tab Application, then from left panel select Storage -> Cookies -> https://www.linkedin.com. In the main view locate row with name li_at and copy content from the column Value.
- --search_keyword       keyword you want to search for in profiles. i.e testrail
+ --session_id  	            value of li_at cookie.
+                            steps required to get value
+                            1. Login to LinkedIn using an account of your choice.
+                            2. Open Chrome developer tools
+                            3. Go to tab Application, then from left panel select Storage -> Cookies -> https://www.linkedin.com. In the main view locate row with name li_at and copy content from the column Value.
+ --search_keyword           keyword you want to search for in profiles. i.e testrail
+
+ --sesssion_id_profiles     session id of linkedin account (most probably fake. it may get banned. )
 
 ```
 
@@ -59,7 +61,3 @@ multiple cases if it doesn't find one selector it will get another one.
 there may be cases that i didn't encouter yet. they will not throw an error. and the only indication that something wrong happen
 will be in your data either jobTitle will be empty string or jobTitle value will be replaced with companyName. I have scrape over 200 profiles didn't find any problem yet.
 if you find any issue please let me know.
-
-```
-
-```
