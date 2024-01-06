@@ -6,12 +6,13 @@ node version 14
 
 ## installation
 
-Install my-project with npm
+Install my-project with npm and build it
 
 ```bash
 git clone https://github.com/railflow/linkedin_scraper_2.git
 cd linkedin_scraper_2/
 npm i
+npm run build
 ```
 
 ## usage
@@ -20,7 +21,7 @@ run scraper with this command.
 
 ```bash
 
-node dist/index.js node dist/index.js --session_id=<session-id of sales navigator account> --sesssion_id_profiles=<session-id of likedin account use to scrape profiles> --search_keyword=<keyword to search for in profiles> --saved_search=<url of saved search of sales navigator account> --output=<name of output csv file>
+node dist/index.js --session_id=<session-id of sales navigator account> --sesssion_id_profiles=<session-id of likedin account use to scrape profiles> --search_keyword=<keyword to search for in profiles> --saved_search=<url of saved search of sales navigator account> --output=<name of output csv file>
 
 ```
 
